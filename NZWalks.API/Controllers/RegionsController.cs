@@ -72,7 +72,7 @@ namespace NZWalks.API.Controllers
 
         }
         [HttpPost]
-        public IActionResult Create([FromBody]AddRegionRequestDto addRegionRequestDto)
+        public IActionResult Create([FromBody] AddRegionRequestDto addRegionRequestDto)
         {
             var regionDomainModel = new Region
             {
@@ -103,7 +103,7 @@ namespace NZWalks.API.Controllers
         {
 
             var regionDomainModel = _context.Regions.FirstOrDefault(x => x.Id == id);
-            
+
             if (regionDomainModel == null)
             {
 
@@ -128,7 +128,30 @@ namespace NZWalks.API.Controllers
         }
 
 
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public IActionResult Delete([FromRoute] Guid id)
+        {
+            var regionDomainModel = _context.Regions.FirstOrDefault(X => X.Id == id);
+
+            if (regionDomainModel == null)
+            {
+                return NotFound();
+            }
+
+            _context.Regions.Remove(regionDomainModel);
+            _context.SaveChanges();
+
+            var regionDto = new RegionDto
+            {
+                Id = regionDomainModel.Id,
+                Code = regionDomainModel.Code,
+                Name = regionDomainModel.Name,
+                RegionImageUrl = regionDomainModel.RegionImageUrl
+            };
+
+            return Ok(regionDto);
+        }
 
     }
-
 }
