@@ -22,7 +22,6 @@ namespace NZWalks.API.Controllers
         }
 
 
-
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AddWalkRequestDto addWalkRequestDto)
         {
@@ -34,10 +33,11 @@ namespace NZWalks.API.Controllers
             return Ok(mapper.Map<WalkDto>(WalkDomainModel));
 
         }
+
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] string? filterOn, [FromQuery] string? filterQuery)
         {
-            var walksDomainModel = await walkRepository.GetAllAsync();
+            var walksDomainModel = await walkRepository.GetAllAsync(filterOn, filterQuery);
 
             return Ok(mapper.Map<List<WalkDto>>(walksDomainModel));
 

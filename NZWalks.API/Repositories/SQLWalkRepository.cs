@@ -37,11 +37,23 @@ namespace NZWalks.API.Repositories
 
         }
 
-        public async Task<List<Walk>> GetAllAsync()
+        public async Task<List<Walk>> GetAllAsync(string? filterOn = null, string? filterQuery = null)
         {
-            return await context.Walks.Include("Difficulty").Include("Region").ToListAsync();
-        }
+            var Walks = context.Walks.Include("Difficulty").Include("Region").AsQueryable();
+            //filtering 
+            if(string.IsNullOrWhiteSpace(filterOn) == false && string.IsNullOrWhiteSpace(filterQuery) == false)
+            {
+                if (filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    Walks = Walks.Where(x => x.Name.Contains(filterQuery));
+                }
 
+            }
+
+            return await Walks.ToListAsync();
+            //return await context.Walks.Include("Difficulty").Include("Region").ToListAsync();
+        }
+           
         public async Task<Walk?> GetByIdAsync(Guid id)
         {
             return await context.Walks
