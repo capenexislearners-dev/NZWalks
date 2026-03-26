@@ -37,7 +37,7 @@ namespace NZWalks.API.Repositories
 
         }
 
-        public async Task<List<Walk>> GetAllAsync(string? filterOn = null, string? filterQuery = null)
+        public async Task<List<Walk>> GetAllAsync(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool isAscending = true)
         {
             var Walks = context.Walks.Include("Difficulty").Include("Region").AsQueryable();
             //filtering 
@@ -48,6 +48,18 @@ namespace NZWalks.API.Repositories
                     Walks = Walks.Where(x => x.Name.Contains(filterQuery));
                 }
 
+            }
+
+            if (string.IsNullOrWhiteSpace(sortBy) == false)
+            {
+                if (sortBy.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    Walks = isAscending ? Walks.OrderBy(x => x.Name): Walks.OrderByDescending(x => x.Name);
+                }
+                else if (sortBy.Equals("Length", StringComparison.OrdinalIgnoreCase))
+                {
+                    Walks = isAscending ? Walks.OrderBy(x => x.lengthInkm) : Walks.OrderByDescending(x => x.lengthInkm);
+                }
             }
 
             return await Walks.ToListAsync();
